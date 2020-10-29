@@ -1,15 +1,87 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>12313213</title>
+    <title>点击事件</title>
 </head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    #box {
+        margin: 20px;
+        display: flex;
+    }
+
+    .btn {
+        border: 1px solid #b3b3b3;
+        height: 32px;
+        line-height: 32px;
+        padding: 0 16px;
+        margin-left: -1px;
+        cursor: pointer;
+    }
+
+    .btn:hover {
+        background-color: #f5f5f5;
+    }
+
+    .btn.actived {
+        background-color: #e0e0e0;
+    }
+
+</style>
 
 <body>
-    Hello World
+    <div id="box">
+        <span class="btn">按钮1</span>
+        <span class="btn">按钮2</span>
+        <span class="btn">按钮3</span>
+    </div>
+
+    <div id="text" style="margin: 20px;">
+        当前点击：<span id="num"></span>
+    </div>
+    <script>
+        let showText = document.getElementById("num");
+        // 常规做法
+        function method1() {
+            let spanList = document.querySelectorAll(".btn");
+            /* forEach 和for循环类似 */
+            spanList.forEach(item => {
+                item.addEventListener("click", e => {
+                    /* 每次点击将其他元素的className删除，当前点击元素加上className */
+                    spanList.forEach(item => item.classList.remove("actived"))
+                    item.classList.add("actived")
+                    showText.innerHTML = item.innerHTML
+                })
+            })
+        }
+        // 下面注释放开就可以测试
+        // method1()
+
+        // 比较好的做法，好像有个专门的名词的（忘了）。因为如果box下面有1000个甚至更多span，第一种方法就要添加1000个监听（addEventListener），开销很大，影响性能。第二种方法只要添加一个就可以了。
+        function method2() {
+            let box = document.getElementById("box");
+            box.addEventListener("click", e => {
+                /* e.currentTarget是指向设置了点击事件监听的元素，这里就是box元素 */
+                /* e.target是最终点击的元素，也就是最里层的元素，这里就是span（注意这是采用事件捕获的结果。如果是事件冒泡机制，就反过来是最外层的元素） */
+                /* 更具体的差别自行百度 */
+                let spanList = e.currentTarget.children
+                for (let index = 0; index < spanList.length; index++) {
+                    spanList[index].classList.remove("actived")
+                }
+                e.target.classList.add("actived")
+                showText.innerHTML = e.target.innerHTML
+            })
+        }
+        // method2()
+    </script>
 </body>
 
 </html>
